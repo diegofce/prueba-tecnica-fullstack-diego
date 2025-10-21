@@ -37,8 +37,8 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Card className="w-96">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Sistema de GestiÃ³n Financiera</CardTitle>
-            <CardDescription>Inicia sesiÃ³n para continuar</CardDescription>
+            <CardTitle className="text-2xl">Sistema de Gestion Financiera</CardTitle>
+            <CardDescription>Inicia sesion para continuar</CardDescription>
           </CardHeader>
           <CardContent>
             <Button 
@@ -47,7 +47,7 @@ export default function Home() {
               onClick={() => window.location.href = "/api/auth/sign-in/github"}
             >
               <Github className="mr-2 h-5 w-5" />
-              Iniciar SesiÃ³n con GitHub
+              Iniciar Sesion con GitHub
             </Button>
           </CardContent>
         </Card>
@@ -90,7 +90,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Sistema de GestiÃ³n Financiera
+                Sistema de Gestion Financiera
               </h1>
               <p className="text-sm text-gray-600 mt-1">
                 Bienvenido, {session.user?.name || session.user?.email}
