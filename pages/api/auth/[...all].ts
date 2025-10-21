@@ -1,8 +1,7 @@
-import { toNodeHandler } from 'better-auth/node';
-import { auth } from '@/lib/auth';
+﻿import { auth } from "@/lib/auth";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { absoluteUrl } from '@/lib/absoluteUrl';
 
-
-// Disallow body parsing, we will parse it manually
-export const config = { api: { bodyParser: false } };
-
-export default toNodeHandler(auth.handler);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  return auth.handler(req, res);
+}

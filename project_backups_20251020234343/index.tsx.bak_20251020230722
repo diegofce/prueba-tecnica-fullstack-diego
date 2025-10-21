@@ -1,0 +1,10 @@
+﻿// ...existing code...
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { absoluteUrl } from '@/lib/absoluteUrl';
+
+// Stub para evitar conflicto si existÃ­a archivo .tsx duplicado.
+// La API real estÃ¡ en index.ts
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.status(404).json({ message: 'Use /api/movements (index.ts) para la API de movimientos' });
+}
+// ...existing code...
