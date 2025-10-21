@@ -1,4 +1,3 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
+export function calcBalance(items: { amount: number }[]) {
+    return items.reduce((sum, i) => sum + Number(i.amount), 0);
+  }

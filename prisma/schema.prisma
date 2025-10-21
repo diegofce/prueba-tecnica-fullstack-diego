@@ -11,40 +11,61 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
+
+// ------------------------------------------------------------
+// 🧩 MODELO DE USUARIO
+// Representa a los usuarios registrados en la aplicación.
+// Incluye relaciones con sesiones, cuentas y movimientos.
+// ------------------------------------------------------------
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id            String     @id @default(cuid()) // Identificador único generado automáticamente
+  name          String                              // Nombre del usuario
+  email         String          @unique             // Correo único
+  emailVerified Boolean                             
+  image         String?                             // Imagen de perfil opcional
+  createdAt     DateTime       @default(now())      // Fecha de creación
+  updatedAt     DateTime       @updatedAt           // Fecha de actualización automática
 
-  @@unique([email])
-  @@map("user")
+  // Relaciones
+  sessions      Session[]                           // Un usuario puede tener varias sesiones
+  accounts      Account[]                           // Un usuario puede tener varias cuentas OAuth
+  movements     Movement[]                          // Un usuario puede registrar varios movimientos
+
+  // Rol del usuario (ADMIN o USER)
+  role          Role           @default(ADMIN)
+
+  @@map("user") // Nombre real de la tabla en la base de datos
 }
 
+// ------------------------------------------------------------
+// 🧩 MODELO DE SESIÓN
+// Representa una sesión de inicio de sesión activa.
+// ------------------------------------------------------------
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
-  token     String
-  createdAt DateTime
-  updatedAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
+
+  // Relación con el usuario
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 
+// ------------------------------------------------------------
+// 🧩 MODELO DE CUENTAS
+// Guarda las credenciales de proveedores externos (GitHub, Google, etc.)
+// ------------------------------------------------------------
 model Account {
-  id                    String    @id
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -56,19 +77,46 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
 
   @@map("account")
 }
 
+// ------------------------------------------------------------
+// 🧩 MODELO DE VERIFICACIÓN
+// Utilizado para autenticaciones por tokens (email links, etc.)
+// ------------------------------------------------------------
 model Verification {
-  id         String    @id
+  id         String    @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
   @@map("verification")
+}
+
+// ------------------------------------------------------------
+// 🧩 ENUMERACIÓN DE ROLES
+// Define los posibles roles de usuario en la app
+// ------------------------------------------------------------
+enum Role {
+  USER
+  ADMIN
+}
+
+// ------------------------------------------------------------
+// 🧩 MODELO DE MOVIMIENTOS
+// Representa los ingresos o egresos registrados por los usuarios
+// ------------------------------------------------------------
+model Movement {
+  id        String   @id @default(cuid())       // Identificador único
+  concept   String                             // Descripción del movimiento
+  amount    Decimal  @db.Decimal(10,2)          // Monto (con 2 decimales)
+  date      DateTime                           // Fecha del movimiento
+  userId    String                             // ID del usuario que lo registró
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())            // Fecha de creación
 }
